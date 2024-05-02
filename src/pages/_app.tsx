@@ -6,18 +6,19 @@ import { FaustProvider } from '@faustwp/core';
 import blocks from '../wp-blocks';
 import '../styles/global.scss';
 
-export default function MyApp({ Component, pageProps }) {
-  const router = useRouter();
+export default function MyApp( { Component, pageProps } ) {
+	const router = useRouter();
 
-  return (
-    <FaustProvider pageProps={pageProps}>
-      <WordPressBlocksProvider
-        config={{
-          blocks,
-          theme: null,
-        }}>
-        <Component {...pageProps} key={router.asPath} />
-      </WordPressBlocksProvider>
-    </FaustProvider>
-  );
+	return (
+		<FaustProvider pageProps={ pageProps }>
+			<WordPressBlocksProvider
+				config={ {
+					blocks,
+					theme: null,
+				} }
+			>
+				<Component { ...pageProps } key={ router.asPath } />
+			</WordPressBlocksProvider>
+		</FaustProvider>
+	);
 }

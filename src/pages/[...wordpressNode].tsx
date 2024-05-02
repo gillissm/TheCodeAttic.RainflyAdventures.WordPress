@@ -1,16 +1,18 @@
 import { getWordPressProps, WordPressTemplate } from '@faustwp/core';
+import { WordPressTemplateProps } from '@faustwp/core/dist/cjs/components/WordPressTemplate';
+import { GetWordPressPropsConfig } from '@faustwp/core/dist/cjs/getWordPressProps';
 
-export default function Page(props) {
-  return <WordPressTemplate {...props} />;
+export default function Page( props: WordPressTemplateProps ) {
+	return <WordPressTemplate { ...props } />;
 }
 
-export function getStaticProps(ctx) {
-  return getWordPressProps({ ctx });
+export function getStaticProps( ctx: any ) {
+	return getWordPressProps( { ctx } );
 }
 
 export async function getStaticPaths() {
-  return {
-    paths: [],
-    fallback: 'blocking',
-  };
+	return {
+		paths: [],
+		fallback: 'blocking',
+	};
 }
