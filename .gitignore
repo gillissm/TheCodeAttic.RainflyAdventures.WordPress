@@ -35,3 +35,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 trailhead.zip
+.faust
+blocks
+*.zip
+src/wp-blocks-temp/*

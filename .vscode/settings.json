@@ -18,5 +18,10 @@
 		"titleBar.inactiveBackground": "#23423d99",
 		"titleBar.inactiveForeground": "#e7e7e799"
 	},
-	"peacock.color": "#23423d"
+	"peacock.color": "#23423d",
+	"markdownlint.config": {
+		"hard_tab": false,
+		"blanks-around-lists": false,
+		"blanks-around-fences": false
+	}
 }

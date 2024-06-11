@@ -1,23 +1,24 @@
 {
-	"name": "trailhead",
+	"name": "Rainfly-Adventures",
 	"version": "0.1.0",
 	"private": true,
 	"files": [
 		"blocks/*",
-		"trailhead.php"
+		"rainflyadventures-plugin.php"
 	],
 	"scripts": {
 		"sync-types": "faust generatePossibleTypes",
-		"dev": "faust dev",
+		"dev": "faust generatePossibleTypes && faust dev",
 		"build": "faust build",
 		"start": "faust start",
 		"lint": "next lint",
 		"plugin-zip": "wp-scripts plugin-zip",
 		"plugin-build": "wp-scripts build --webpack-src-dir=src/wp-blocks --output-path=blocks",
 		"add-block": "cd ./src/wp-blocks && npx @wordpress/create-block@latest --no-plugin --no-wp-scripts --namespace rainflyadventures",
-		"plugin-deploy": "dotenvx run -f .env.local -- cross-var extract-zip ./trailhead.zip %PLUGIN_DIRECTORY%/trailhead",
+		"plugin-deploy": "dotenvx run -f .env.local -- cross-var extract-zip ./Rainfly-Adventures.zip %PLUGIN_DIRECTORY%/Rainfly-Adventures",
 		"plugin": "npm run plugin-build && npm run plugin-zip && npm run plugin-deploy",
-		"testread": "dotenvx run -f .env.local -- cross-var echo %PLUGIN_DIRECTORY%"
+		"testread": "dotenvx run -f .env.local -- cross-var echo %PLUGIN_DIRECTORY%",
+		"blockset": "faust blockset"
 	},
 	"dependencies": {
 		"@apollo/client": "^3.9.11",

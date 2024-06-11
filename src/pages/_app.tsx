@@ -5,8 +5,9 @@ import { WordPressBlocksProvider } from '@faustwp/blocks';
 import { FaustProvider } from '@faustwp/core';
 import blocks from '../wp-blocks';
 import '../styles/global.scss';
+import { AppProps } from "next/app";
 
-export default function MyApp( { Component, pageProps } ) {
+export default function MyApp( { Component, pageProps }:AppProps ) {
 	const router = useRouter();
 
 	return (

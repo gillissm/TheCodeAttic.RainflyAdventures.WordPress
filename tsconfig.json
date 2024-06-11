@@ -17,6 +17,6 @@
 			"@/*": [ "./src/*" ]
 		}
 	},
-	"include": [ "next-env.d.ts", "**/*.ts", "**/*.tsx", "src/wp-blocks/bodycopy/bodycopy.jsx" ],
+	"include": [ "next-env.d.ts", "**/*.ts", "**/*.tsx", "src/wp-blocks/bodycopy/bodycopy.jsx", "src/wp-templates/single.js" ],
 	"exclude": [ "node_modules" ]
 }
