@@ -2,10 +2,11 @@
 import { gql } from '@apollo/client';
 import { flatListToHierarchical, useFaustQuery } from '@faustwp/core';
 import { WordPressBlocksViewer } from '@faustwp/blocks';
-import HeroCTAQuery from '../models/HeroCTA.model'
+import * as QueryFragments from '../models/index.query'
 
 const GET_POST_QUERY = gql`
-  ${HeroCTAQuery.fragment}
+  ${QueryFragments.HeroCTAQuery.fragment}
+  ${QueryFragments.PromoCardQuery.fragment}
   query GetPost($databaseId: ID!, $asPreview: Boolean = false) {
     post(id: $databaseId, idType: DATABASE_ID, asPreview: $asPreview) {
       title
@@ -28,14 +29,23 @@ const GET_POST_QUERY = gql`
               headline
             }
           }
-        ... ${HeroCTAQuery.key}
-      
+          ... on RainflyadventuresInnerblockexp{
+            attributes {
+              actionLink
+              ctaHero
+              headline
+            }
+          }
+        ... ${QueryFragments.HeroCTAQuery.key}
+        ... ${QueryFragments.PromoCardQuery.key}
         }
       }
     }
 `;
 
 export default function Component(props) {
+
+  
   // Loading state for previews
   if (props.loading) {
     return <>Loading...</>;
@@ -43,6 +53,7 @@ export default function Component(props) {
   const { post } = useFaustQuery(GET_POST_QUERY);
   const { title, content, featuredImage, date, author, editorBlocks } = post ?? {};
   const blocksList = flatListToHierarchical(editorBlocks);
+  console.log(blocksList);
   return (
     <>
       <div>

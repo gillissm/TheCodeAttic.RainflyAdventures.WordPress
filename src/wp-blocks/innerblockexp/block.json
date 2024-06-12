@@ -1,0 +1,38 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "rainflyadventures/innerblockexp",
+	"version": "0.1.0",
+	"title": "Inner Block Testing",
+	"category": "widgets",
+	"icon": "editor-unlink",
+	"description": "Test case for inner block usage",
+	"example": {},
+	"supports": {
+		"html": false
+	},
+	"textdomain": "ctawithprops",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"attributes": {
+		"headline":{
+			"type": "string",
+			"default": "Enter Headline Text"
+		},
+		"actionLink":{
+			"type":"string",
+			"default": "https://www.rei.com"
+		},
+		"ctaHero":{
+			"type":"string",
+			"default": "http://rainflyadventures.local/wp-content/uploads/2024/05/76919a3104c15fc9_8434-w300-h300-b1-p0-.jpg"
+		},
+		"actionLabel":{
+			"type":"string",
+			"default": "Click Me!"
+		}
+
+	}
+}
+
+

@@ -10,5 +10,6 @@ export default {
 	'CoreImage': CoreBlocks.CoreImage,
 	'RainflyadventuresCtawithprops': CTAWithProps,
 	'RainflyadventuresSamplecta': SampleCTA,
-	'RainflyadventuresHeroCTA': RainflyComponents.HeroCTA
+	'RainflyadventuresHeroCTA': RainflyComponents.HeroCTA,
+	'RainflyadventuresPromocard': RainflyComponents.PromoCard
 };

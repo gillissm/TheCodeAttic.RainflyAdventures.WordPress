@@ -1001,12 +1001,108 @@ Open **HeroCTA.tsx**, as this will be where the majority of the work will be tak
 
 Now that the rendering component has been defined, we can return to work on the editing experience as defined by the block for WordPress.
 
-1. Open wp-blocks -> herocta -> **edit.tsx**, and add the following starter setup. (This is very similar to the code used in [Step 4 - cReating the Edit Experience](#step-4---creating-the-edit-experience))
+1. Open wp-blocks -> herocta -> **edit.tsx**, and add the following starter setup. (This is very similar to the code used in [Step 4 - Creating the Edit Experience](#step-4---creating-the-edit-experience)).
+   - Important callout is that the interface type being passed through to BlockEditProps is from the model file created, and no longer within the Edit file directly as shown in the simplified steps above.
 
   ```tsx
-  
+  //wp-blocks/herocta/edit.tsx
+
+  //Version 1 - Standard Editing Experience with no reference to rendering component
+  export function Edit(props: BlockEditProps<IHeroCTAModel>) {
+    return (
+      <>
+        <InspectorControls>
+          <PanelBody title='Action Link and Label' initialOpen={true}>
+            <PanelRow>
+              <fieldset>
+                <div>
+                  <URLInputButton
+                    url={props.attributes.actionLink}
+                    onChange={(url, post) => props.setAttributes({ actionLink: url, actionLabel: (post && post.title)||props.attributes.actionLabel })} />
+                  <span style={{ marginRight: '5px' }}>{props.attributes.actionLink}</span>							
+                </div>
+                <TextControl label='Provide Action Label'
+                  value={props.attributes.actionLabel}
+                  onChange={(lbl)=> props.setAttributes({actionLabel:lbl})}/>
+                </fieldset>
+              </PanelRow>
+          </PanelBody>
+        </InspectorControls>
+      
+        <div {...useBlockProps()}>
+          <div style={{border:'1px dotted purple'}}>
+            <a href={props.attributes.actionLink}
+              style={{ border: '2px solid green', padding: '10px', borderRadius: '15px' }}>{props.attributes.actionLabel}</a>				
+            <br />
+            <RichText
+              identifier="headline"
+              tagName="p"
+              onChange={(el) => props.setAttributes({ headline: el })}
+              allowedFormats={['core/bold', 'core/italic']}
+              value={props.attributes.headline}
+              placeholder={'Write the headline...'}
+            />
+            <br />				
+            <MediaUploadCheck>
+              <MediaPlaceholder
+                onSelect={(el) => props.setAttributes({ ctaHero: el.url, ctaHeroAlt: el.alt })}
+                allowedTypes={['image']}
+                multiple={false}
+                labels={{ title: 'Action Image', 'instructions': 'Select or Upload an image to use in the CTA' }}>
+                  <img src={props.attributes.ctaHero} style={{ width: '25%' }} alt='thumbnail of selected image' />
+              </MediaPlaceholder>
+            </MediaUploadCheck>
+          </div> 
+        </div>
+      </>		
+    );
+  }
   ```
 
+2. *BlockEditProps* provides access to the default properties for a block, one of these properties is **isSelected** which returns true when a user clicks on the block in the canvas and false otherwise. Through using this value we can start to manipulate what the editor sees on the canvas.
+  - Let's wrap the inner DIV of the component with isSelected check to show only when a user click on the block.
+  ```tsx
+  //wp-blocks/herocta/edit.tsx
+
+  //Version 2 - Wrapping inner DIV with isSelected check
+  export function Edit(props: BlockEditProps<IHeroCTAModel>) {
+    return (
+      <>
+        <InspectorControls>...</InspectorControls>
+      
+        <div {...useBlockProps()}>
+          {props.isSelected ? <div style={{border:'1px dotted purple'}}>....</div> 
+            : <div>
+                <p>This message is shown when not selected.</p>
+                <img src={props.attributes.ctaHero} style={{ width: '59%' }} alt='thumbnail of selected image' />
+              </div>}
+        </div>
+      </>
+    );
+  }
+  ```
+  ![Display with isSelectedFlag](./.assets/08-wpProp-isSelectExample.png)
+
+3. Showing different display depending on selected state is very helpful, and can be further evolved to show our rendering component.
+   - It is important to note that the rendering component's prop must be  
+  ```tsx
+  //wp-blocks/herocta/edit.tsx
+  
+  // Version 3 - Leveraging the isSelected property to display the rendering component.
+  //  Note, that the props for the rendering componet must be casted as BlockWithAttributes
+  export function Edit(props: BlockEditProps<IHeroCTAModel>) {
+    return (
+      <>
+        <InspectorControls> ... </InspectorControls>
+      
+        <div {...useBlockProps()}>
+          {props.isSelected ? <div style={{border:'1px dotted purple'}}> ... </div> 
+            : <HeroCTA {...props as BlockWithAttributes}></HeroCTA>}
+        </div>
+      </>		
+    );
+  }
+  ```
 
 
 ### Custom Blocks with Faust.js

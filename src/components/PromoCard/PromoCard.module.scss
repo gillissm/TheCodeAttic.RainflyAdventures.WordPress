@@ -1,0 +1,28 @@
+.herowrapper{
+    height: 200px;
+    width: 100%;
+    position: relative;
+    .headlineOverlay{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        text-align: center;
+    }
+    .actionButton{
+        position: absolute;
+        top: 75%;
+        right: 25%;
+        background-color: darkgoldenrod;
+        color: white;
+        border: 1px solid darkgoldenrod;
+        border-radius: 15px;
+        padding: 10px;
+        text-decoration: none;
+        :hover{
+            color: darkgoldenrod;
+            background-color: gray;            
+        }
+    }
+}

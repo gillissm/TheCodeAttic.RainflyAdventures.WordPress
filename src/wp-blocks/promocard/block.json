@@ -1,0 +1,40 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "rainflyadventures/promocard",
+	"version": "2.2.0",
+	"title": "Promo Card",
+	"category": "widgets",
+	"icon": "embed-post",
+	"description": "Promo Card to test with object attribute type",
+	"example": {},
+	"supports": {
+		"html": false
+	},
+	"textdomain": "promocard",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"attributes": {
+		"headline":{
+			"type": "string",
+			"default": "Enter Headline Text"
+		},
+		"actionLink":{
+			"type":"string",
+			"default": "https://www.rei.com"
+		},
+		"ctaHero":{
+			"type":"string",
+			"default": "http://rainflyadventures.local/wp-content/uploads/2024/05/76919a3104c15fc9_8434-w300-h300-b1-p0-.jpg"
+		},
+		"actionLabel":{
+			"type":"string",
+			"default": "Click Me!"
+		},
+		"bigImage":{
+			"type":"object"
+		}
+	}
+}
+
+

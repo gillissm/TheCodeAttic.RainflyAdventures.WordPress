@@ -17,12 +17,14 @@ function HeroCTA(ctaModel: BlockWithAttributes) {
   // build the component
   const backgroundImageValue = `url(${att.ctaHero})`;
   return (
+    <>
     <div className={styles.herowrapper} style={{ backgroundImage: backgroundImageValue }}>
       <h1 className={styles.headlineOverlay}>
         {att?.headline}
       </h1>
       <a className={styles.actionButton} href={att?.actionLink}>{att?.actionLabel}</a>
     </div>
+    </>
   );
 }
 
