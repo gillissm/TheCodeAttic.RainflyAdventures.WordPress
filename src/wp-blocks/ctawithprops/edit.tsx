@@ -235,25 +235,3 @@ export function Edit(props: BlockEditProps<CTAProps>) {
 }
 
 
-
-
-// export function Edit(props: BlockEditProps<CTAProps>) {
-// 	let cta: BlockWithAttributes = { attributes: props.attributes };
-// 	return (
-// 		<div {...useBlockProps()}>
-// 			{props.isSelected ?				
-// 				<p>
-// 					{__('CTA With Props – hello from the editor!', 'samplecta')}
-// 					<br />
-// 					{props.attributes.actionLink}
-// 					<br />
-// 					{props.attributes.headline}
-// 					<br />
-// 					{props.attributes.ctaHero}
-// 					<br/>
-// 				</p>
-// 				: <CTA {...cta}></CTA>
-// 			}
-// 		</div>
-// 	);
-// }

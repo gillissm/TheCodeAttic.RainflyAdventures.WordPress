@@ -782,6 +782,231 @@ export function Edit(props: BlockEditProps<CTAProps>) {
 
 Up to this point we have looked at editing the block's attributes within WordPress, but this doesn't demonstrate how we can a) provide a more clear visual representaiton during editing of the page and b) what occurs at page render time.
 
+This step will leverage a new block called **HeroCTA**. The first thing to do is create the basic block folder and file structure as explained in  [Step 1 - Setup of Basic File Structure](#step-1---setup-of-basic-file-structure-and-plumbing-the-block-registration) and [Step 2 - Build, Activate, and Test the Block](#step-2---build-activate-and-test-the-block). The *block.json* should register the following attribute list:
+
+  ```json
+  {
+    "name": "rainflyadventures/herocta",	
+    "title": "Hero CTA",
+    ....,
+    "attributes": {
+      "headline":{
+        "type": "string",
+        "default": "Enter Headline Text"
+      },
+      "actionLink":{
+        "type":"string",
+        "default": "https://www.rei.com"
+      },
+      "ctaHero":{
+        "type":"string",
+        "default": "http://rainflyadventures.local/wp-content/uploads/2024/05/76919a3104c15fc9_8434-w300-h300-b1-p0-.jpg"
+      },
+      "actionLabel":{
+        "type":"string",
+        "default": "Click Me!"
+      }
+    }
+  }
+  ```
+
+Alos, do NOT forget to update the plugin php file with a register command for the block or you will never be able to add it to a page for editing.
+
+With the basics block files in place, we can begin the process of establishing files for the rendering component.
+
+##### Create the Model File
+
+The first file that will be created is the model file. This file helps to centralize and typesafe references to the attributes and other properties of the block and compenent.
+
+1. Create a file in *src -> models* name it using the format "COMPONENT.model.tsx", for the example that would be **HeroCTA.model.tsx**
+2. The first thing to export from this file, is a new interface that extends ```Records<string,any>``` which supports the list of attributes for the block.
+  ```tsx
+  // models/HeroCTA.model.tsx
+
+  // Interface representing the attributes for the HeroCTA Block.
+  export interface IHeroCTAModel extends Record<string, any> {	
+      headline: string,
+      actionLink: string,
+      ctaHero: string | null,
+      actionLabel: string
+  }
+  ```
+
+Having an interface defined, we now need to configure details as required to support the rendering of the block as part of the live site. This requires a GraphQL query fragment, a fragment name or key, as well as a block type name or displayname to take advantage of the auto mapping via Faust.js.
+
+To standardize this process a custom base class called **BaseQuery** exists. This class contains the common properties to manage GraphQL querying for a block, as well as important type naming used to determine the approriate components at render time.
+
+```tsx
+// models/BaseQuery.model.tsx
+
+import { DocumentNode } from '@apollo/client';
+import { gql } from '@apollo/client';
+
+// type should be the block/component's model, used to auto create the GraphQL fragment based on class properties (ie attributes)
+export class BaseQuery<type>{
+    //GraphQL fragment name or key
+    key: string;
+
+    // Block type name as returned by GraphQL
+    //  This is also used by Faust.js to perform block mapping to determine which component to render
+    typeName: string;
+
+    //GraphQL fragment, used to query for the related block's data
+    readonly fragment: DocumentNode;
+
+    // Parameter 1 - is the GraphQL Fragment key/name that will be used
+    // Parameter 2 - Block Typename as stored by WordPress, this value is built from the namespace in the block.json
+    // Parameter 3 - Instance of the component model , that is used to produce the GraphQL Fragment
+    constructor(key: string, typeName: string, att:type) {
+        this.key = key;
+        this.typeName = typeName;
+        
+        let attlist = Object.getOwnPropertyNames(att);
+        this.fragment = gql`
+            fragment ${this.key} on ${this.typeName}{
+                attributes{
+                    ${attlist.join('\n')}
+                }
+            }
+        `;
+    }      
+};
+```
+
+The *BaseQuery* will be implemented in two steps, all still performed in the component model file.
+
+1. Create a const variable named in the format of *COMPONENTQuery*, for the example that would be **HeroCTAQuery**
+2. This variable will be assigned a new BaseQuery object, typed to the model class.
+3. Finally, perform a default export of the variable.
+  ```tsx
+  // models/HeroCTA.model.tsx
+
+  // Assign the query variable to a new BaseQuery
+  // Generic Type is the interface model,to provide type checking for parameter 3
+  // Parameter 1 - is the GraphQL Fragment key-name that will be used
+  // Parameter 2 - Block Typename as stored by WordPress, this value is built from the namespace in the block.json
+  // Parameter 3 - Instance of the component model , that is used to produce the GraphQL Fragment
+  const HeroCTAQuery = new BaseQuery<IHeroCTAModel>(
+      'HeroCTAFragment',
+      'RainflyadventuresHerocta',
+      {
+          headline: "",
+          actionLink: "",
+          ctaHero: "",
+          actionLabel:""
+      });
+
+  // Export the query variable for use within the component and pages
+  export default HeroCTAQuery;
+  ```
+
+##### Create Rendering Component
+
+With a model defined to typesafe attribute access the next step in the process is to create the rendering component. This is the component that will be seen to a site visitor, ie the rendered site.
+
+1. In *src -> components* create a new folder for the component. For the example this would be named **HeroCTA**.
+2. Within the folder create the following three files:
+   1. HeroCTA.module.scss -> used for styling
+   2. HeroCTA.tsx -> main component definition file
+   3. index.tsx -> this will be used as a simplefied shortcut to easily import the component for access
+
+To provide some context, open **HeroCTA.moduel.scss** and copy the following starter style details.
+
+```scss
+// components/HeroCTA/HeroCTA.moduel.scss
+
+.herowrapper{
+    height: 200px;
+    width: 100%;
+    position: relative;
+    .headlineOverlay{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        text-align: center;
+    }
+    .actionButton{
+        position: absolute;
+        top: 75%;
+        right: 25%;
+        background-color: darkgoldenrod;
+        color: white;
+        border: 1px solid darkgoldenrod;
+        border-radius: 15px;
+        padding: 10px;
+        text-decoration: none;
+        :hover{
+            color: darkgoldenrod;
+            background-color: gray;            
+        }
+    }
+}
+```
+
+Open **HeroCTA.tsx**, as this will be where the majority of the work will be taking place.
+
+1. All components will require the following three imports, depending on the needs additional imports may be required for your development effort.
+   1. ```import { BlockWithAttributes } from '@faustwp/blocks/dist/mjs/components/WordPressBlocksViewer';```
+      1. BlockWithAttributes is the Faust.js type that is used to pass information about the block during rendering, and is how we will get access to the attributes for display
+   2. ```import styles from './HeroCTA.module.scss';```
+      1. default Next.js behavior to access the related styles
+   3. ```import HeroCTAQuery, { IHeroCTAModel } from '../../models/HeroCTA.model';```
+      1. Import of the attribute interface and query variable based on BaseQuery
+2. We will leverage component function defitions, but do NOT default export the funtion directly, as this causes problems with extending the component with the required block typename used for automatic discovery. The function accepts a single prop of type *BlockWithAttributes*.
+  ```tsx
+  // components/HeroCTA/HeroCTA.tsx
+
+  //// do NOT directly export as this causes problems with assignment of the required displayName used for auto mapping blocks
+  function HeroCTA(ctaModel: BlockWithAttributes) {  }
+  ```
+3. Complete the component function by access the attributes and returning the expected HTML rendering.
+  ```tsx
+  // components/HeroCTA/HeroCTA.tsx
+
+  function HeroCTA(ctaModel: BlockWithAttributes) {
+    // convert the generic attribute list to the typesafe object
+    let att = { ...ctaModel.attributes } as IHeroCTAModel;
+
+    // build the component
+    const backgroundImageValue = `url(${att.ctaHero})`;
+    return (
+      <div className={styles.herowrapper} style={{ backgroundImage: backgroundImageValue }}>
+        <h1 className={styles.headlineOverlay}>
+          {att?.headline}
+        </h1>
+        <a className={styles.actionButton} href={att?.actionLink}>{att?.actionLabel}</a>
+      </div>
+    );
+  }
+  ```
+4. To take advantage of the auto mapping feature of Faust.js to determine which blocks (components) should be rendered in what order you must extend the component defintion with a **displayName** property. This property must be set to the block typename as returned by GraphQL. Therefore we can take advantage of the BaseQuery class implementation and reference the value we set there.
+  ```tsx
+  // components/HeroCTA/HeroCTA.tsx
+
+  // extend the component definition with a displayname property that stores the block typenmae as defined in GraphQL schema
+  //  this is required to for automapping through Faust.js
+  HeroCTA.displayName = HeroCTAQuery.typeName;
+  ```
+5. Finally, export the compoentent for use
+  ```tsx
+  // components/HeroCTA/HeroCTA.tsx
+  
+  export default HeroCTA;
+  ```
+6. Open the *index.tsx*, and add an export of the component to simplify import references throughout the application, ```export { default as HeroCTA } from './HeroCTA';```
+
+#### Step 6 - Enhancing the Editing Experience
+
+Now that the rendering component has been defined, we can return to work on the editing experience as defined by the block for WordPress.
+
+1. Open wp-blocks -> herocta -> **edit.tsx**, and add the following starter setup. (This is very similar to the code used in [Step 4 - cReating the Edit Experience](#step-4---creating-the-edit-experience))
+
+  ```tsx
+  
+  ```
+
 
 
 ### Custom Blocks with Faust.js

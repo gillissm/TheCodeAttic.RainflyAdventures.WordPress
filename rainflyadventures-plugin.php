@@ -44,6 +44,7 @@ function register_custom_blocks() {
 
   //register action, the second parameter is the path to the block files as packaged by the plugin.
   // the base project struture provided always packages into 'blocks' as the parent directory
-	register_block_type( __DIR__ . '/blocks/samplecta' );	
-	register_block_type( __DIR__ . '/blocks/ctawithprops' );	
+	register_block_type(__DIR__ . '/blocks/samplecta');
+	register_block_type( __DIR__ . '/blocks/ctawithprops' );
+	register_block_type( __DIR__ . '/blocks/herocta' );
 }
