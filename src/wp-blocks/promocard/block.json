@@ -3,9 +3,9 @@
 	"apiVersion": 3,
 	"name": "rainflyadventures/promocard",
 	"version": "2.2.0",
-	"title": "Promo Card",
-	"category": "widgets",
-	"icon": "embed-post",
+	"title": "Promo Card Object Test",
+	"category": "design",
+	"icon": "insert",
 	"description": "Promo Card to test with object attribute type",
 	"example": {},
 	"supports": {
